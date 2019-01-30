@@ -1,5 +1,5 @@
 const path = require("path");
-let baseUrl = process.env.NODE_ENV === "production" ? "/" : "/";
+let baseUrl = process.env.NODE_ENV === "production" ? "./" : "./";
 
 function resolve(dir) {
   return path.join(__dirname, dir);
@@ -7,7 +7,7 @@ function resolve(dir) {
 
 module.exports = {
   publicPath: baseUrl,
-  outputDir: "docs",
+  outputDir: "dist",
   lintOnSave: true,
   runtimeCompiler: true, // 运行时版本是否需要编译
   transpileDependencies: [], // 默认babel-loader忽略mode_modules，这里可增加例外的依赖包名
