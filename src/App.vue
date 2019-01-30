@@ -5,20 +5,21 @@
 </template>
 
 <script>
-import map2d from './components/map.vue'
+import map2d from "./components/map.vue";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
     map2d
   }
-}
+};
 </script>
 
 <style>
-html,body,
+html,
+body,
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
