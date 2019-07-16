@@ -7,7 +7,7 @@ function resolve (dir) {
 
 module.exports = {
   publicPath: baseUrl,
-  outputDir: 'doc',
+  outputDir: 'docs',
   lintOnSave: undefined,
   runtimeCompiler: true, // 运行时版本是否需要编译
   transpileDependencies: [], // 默认babel-loader忽略mode_modules，这里可增加例外的依赖包名
