@@ -67,7 +67,8 @@ export default {
       ]
       L.polyline(latlngs, {
         color: 'red', // 颜色
-        weight: 3// 线宽
+        weight: 3, // 线宽
+        dashArray: '5 5'// 虚线设置,去掉即为实线
       }).addTo(this.map)
 
       let myIcon = L.icon({
@@ -76,13 +77,23 @@ export default {
         iconAnchor: [24, 48]// 图标偏移
       })
 
-      let marker = L.marker([470.5, 174.5], {
-        icon: myIcon
-      }).addTo(this.map)
+      let movingMarker = null
 
-      marker.slideTo([343.5, 174.75], {
-        duration: 2000// 动画时间
-      })
+      for (let index = 1; index < latlngs.length; index++) {
+        if (index == 1) {
+          movingMarker = L.marker(latlngs[index - 1], {
+            icon: myIcon
+          }).addTo(this.map).slideTo(latlngs[index], {
+            duration: 2000// 动画时间
+          })
+        } else {
+          setTimeout(() => {
+            movingMarker.slideTo(latlngs[index], {
+              duration: 2000// 动画时间
+            })
+          }, 2000)
+        }
+      }
     }
   }
 }
