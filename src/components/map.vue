@@ -1,49 +1,109 @@
 <template>
-  <div id="map">
-  </div>
+  <div id="map" />
 </template>
 
 <script>
-import L from "leaflet";
-
-const MAP_LAYER = L.tileLayer(
-    "http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}"
-  );
+import L from 'leaflet'
+import 'leaflet.heat'
+import 'leaflet.marker.slideto'
 
 export default {
-  name: "map2d",
-  data() {
+  name: 'Map2d',
+  data () {
     return {
-      map: null
-    };
+      map: null,
+      heatMap: null
+    }
   },
-  mounted() {
-    this.initMap();
+  mounted () {
+    this.initMap(), this.addHeatMap(), this.addRoute()
   },
   methods: {
-    initMap() {
-      this.map = L.map("map", {
-        minZoom: 3,
-        maxZoom: 18,
-        attributionControl: false,
-        layers: [MAP_LAYER],
-        zoomControl: false,
-        center: [31.23694, 121.45361],
-        zoom: 15
-      });
+    initMap () {
+      this.map = L.map('map', {
+        center: [410, 210], // 中心点坐标
+        zoom: 0, // 放大级别
+        crs: L.CRS.Simple,
+        minZoom: -4,
+        maxZoom: 4
+      })
+      let imageUrl = require('../assets/data.svg')// 背景地图
+      let imageBounds = [[0, 0], [822.051, 425.199]]// 尺寸
+
+      L.imageOverlay(imageUrl, imageBounds).addTo(this.map)
+
+      this.map.fitBounds(imageBounds)
+
+      this.map.setZoom(2)// 调整缩放级别
+
+      this.map.on('zoomend', e => {
+        // 打印当前缩放级别
+        console.log('zoom', this.map.getZoom())
+      })
+    },
+    addHeatMap () {
+      this.heatMap = L.heatLayer(
+        [], // 热力图坐标
+        { radius: 25, // 热力图半径
+          gradient: { 0.4: 'blue', 0.65: 'lime', 1: 'red' } // 设置颜色渐变
+        }
+      )
+
+      this.map.addLayer(this.heatMap)
+
+      this.map.on('click', e => {
+        // 打印当前点击坐标
+        console.log('point', e.latlng)
+        // 每次点击后将坐标写入到热力图图层
+        this.heatMap.addLatLng(e.latlng)
+      })
+    },
+    addRoute () {
+      // 轨迹坐标
+      let latlngs = [
+        [470.5, 174.5],
+        [343.5, 174.75],
+        [343, 222]
+      ]
+      L.polyline(latlngs, {
+        color: 'red', // 颜色
+        weight: 3// 线宽
+      }).addTo(this.map)
+
+      let myIcon = L.icon({
+        iconUrl: require('../assets/people.png'), // 图标路径
+        iconSize: [48, 48], // 图标尺寸
+        iconAnchor: [24, 48]// 图标偏移
+      })
+
+      let marker = L.marker([470.5, 174.5], {
+        icon: myIcon
+      }).addTo(this.map)
+
+      marker.slideTo([343.5, 174.75], {
+        duration: 2000// 动画时间
+      })
     }
   }
-};
+}
 </script>
 
 <style src='../assets/leaflet.css'></style>
 
-<style scoped>
+<style>
 #map {
   height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
+  background-color: #041529
 }
-</style>
+.leaflet-bar {
+  display: none !important;
+}
 
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+</style>

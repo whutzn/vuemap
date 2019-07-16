@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <map2d></map2d>
+    <map2d />
   </div>
 </template>
 
 <script>
-import map2d from "./components/map.vue";
+import map2d from './components/map.vue'
 
 export default {
-  name: "app",
+  name: 'App',
   components: {
     map2d
   }
-};
+}
 </script>
 
 <style>

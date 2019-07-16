@@ -1,14 +1,14 @@
-const path = require("path");
-let baseUrl = process.env.NODE_ENV === "production" ? "./" : "./";
+const path = require('path')
+let baseUrl = process.env.NODE_ENV === 'production' ? './' : './'
 
-function resolve(dir) {
-  return path.join(__dirname, dir);
+function resolve (dir) {
+  return path.join(__dirname, dir)
 }
 
 module.exports = {
   publicPath: baseUrl,
-  outputDir: "dist",
-  lintOnSave: true,
+  outputDir: 'dist',
+  lintOnSave: undefined,
   runtimeCompiler: true, // 运行时版本是否需要编译
   transpileDependencies: [], // 默认babel-loader忽略mode_modules，这里可增加例外的依赖包名
   productionSourceMap: false, // 是否在构建生产包时生成 sourceMap 文件，false将提高构建速度
@@ -20,11 +20,11 @@ module.exports = {
     loaderOptions: {
       // css预设器配置项
       sass: {
-        data: "" //`@import "@/assets/scss/mixin.scss";`
+        data: '' // `@import "@/assets/scss/mixin.scss";`
       }
     }
   },
-  parallel: require("os").cpus().length > 1, // 构建时开启多进程处理babel编译
+  parallel: require('os').cpus().length > 1, // 构建时开启多进程处理babel编译
   pluginOptions: {
     // 第三方插件配置
   },
@@ -33,7 +33,7 @@ module.exports = {
   },
   devServer: {
     open: true,
-    host: "0.0.0.0",
+    host: '0.0.0.0',
     port: 8080,
     https: false,
     hotOnly: false,
@@ -47,4 +47,4 @@ module.exports = {
     // },
     before: app => {}
   }
-};
+}
