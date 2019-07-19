@@ -1,5 +1,12 @@
 <template>
-  <div id="map" />
+  <div class="map_main">
+    <div class="control_panel">
+      <button @click="this.pasueMove">暂停</button>
+      <button @click="this.controlSpeed">2X</button>
+      <button >继续</button>
+    </div>
+    <div id="map"></div>
+  </div>
 </template>
 
 <script>
@@ -12,7 +19,9 @@ export default {
   data () {
     return {
       map: null,
-      heatMap: null
+      heatMap: null,
+      movingMarker: null,
+      durationTime: 4000,
     }
   },
   mounted () {
@@ -77,23 +86,29 @@ export default {
         iconAnchor: [24, 48]// 图标偏移
       })
 
-      let movingMarker = null
+      let movingMarker = null, durationTime = 5000;
 
       for (let index = 1; index < latlngs.length; index++) {
         if (index == 1) {
-          movingMarker = L.marker(latlngs[index - 1], {
+          this.movingMarker = L.marker(latlngs[index - 1], {
             icon: myIcon
           }).addTo(this.map).slideTo(latlngs[index], {
-            duration: 2000// 动画时间
+            duration: this.durationTime// 动画时间
           })
         } else {
           setTimeout(() => {
-            movingMarker.slideTo(latlngs[index], {
-              duration: 2000// 动画时间
+            this.movingMarker.slideTo(latlngs[index], {
+              duration: this.durationTime// 动画时间
             })
-          }, 2000)
+          }, this.durationTime)
         }
       }
+    },
+    pasueMove() {
+      this.movingMarker.slideCancel()
+    },
+    controlSpeed() {
+
     }
   }
 }
@@ -102,6 +117,14 @@ export default {
 <style src='../assets/leaflet.css'></style>
 
 <style>
+.map_main {
+  height: 100%;
+  width: 100%;
+}
+.control_panel {
+  position: absolute;
+  z-index: 999;
+}
 #map {
   height: 100%;
   width: 100%;
