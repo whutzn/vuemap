@@ -14,6 +14,12 @@ import L from 'leaflet'
 import 'leaflet.heat'
 import 'leaflet.marker.slideto'
 
+const DATA = [
+  [0.707,0.313],
+  [0.699,0.521],
+  [0.707,0.313]
+]
+
 export default {
   name: 'Map2d',
   data () {
@@ -22,6 +28,7 @@ export default {
       heatMap: null,
       movingMarker: null,
       durationTime: 4000,
+      coords: ''
     }
   },
   mounted () {
@@ -29,21 +36,25 @@ export default {
   },
   methods: {
     initMap () {
+      let x = 820, y = 420;
       this.map = L.map('map', {
-        center: [410, 210], // 中心点坐标
+        center: [x, y], // 中心点坐标
         zoom: 0, // 放大级别
         crs: L.CRS.Simple,
         minZoom: -4,
-        maxZoom: 4
+        maxZoom: 4,
+        maxBounds: [[0,0],[x*2,y*2]]
       })
       let imageUrl = require('../assets/data.svg')// 背景地图
-      let imageBounds = [[0, 0], [822.051, 425.199]]// 尺寸
+      let imageBounds = [[x/2, y/2], [x+x/2, y+y/2]]// 尺寸
 
       L.imageOverlay(imageUrl, imageBounds).addTo(this.map)
 
       this.map.fitBounds(imageBounds)
 
       this.map.setZoom(2)// 调整缩放级别
+
+      // this.map.setMaxBounds([[0,0],[820*2,425*2]])
 
       this.map.on('zoomend', e => {
         // 打印当前缩放级别
@@ -62,18 +73,19 @@ export default {
 
       this.map.on('click', e => {
         // 打印当前点击坐标
-        console.log('point', e.latlng)
-        // 每次点击后将坐标写入到热力图图层
-        this.heatMap.addLatLng(e.latlng)
+        console.log('point', 'lat: '+e.latlng.lat,'lng: '+e.latlng.lng)
+        this.coords =e.latlng.lat+','+e.latlng.lng
+        // this.heatMap.addLatLng(e.latlng)
       })
     },
     addRoute () {
       // 轨迹坐标
       let latlngs = [
-        [470.5, 174.5],
-        [343.5, 174.75],
-        [343, 222]
       ]
+      DATA.forEach(element => {
+        let coord = this.map.layerPointToLatLng(L.point(element[0]*822, element[1]*425))
+        latlngs.push([coord.lat,coord.lng])
+      });
       L.polyline(latlngs, {
         color: 'red', // 颜色
         weight: 3, // 线宽
@@ -88,13 +100,15 @@ export default {
 
       let movingMarker = null, durationTime = 5000;
 
+      this.movingMarker = L.marker(latlngs[0], {
+            icon: myIcon
+          }).addTo(this.map)
+
       for (let index = 1; index < latlngs.length; index++) {
         if (index == 1) {
-          this.movingMarker = L.marker(latlngs[index - 1], {
-            icon: myIcon
-          }).addTo(this.map).slideTo(latlngs[index], {
-            duration: this.durationTime// 动画时间
-          })
+          this.movingMarker.slideTo(latlngs[index], {
+              duration: this.durationTime// 动画时间
+            })
         } else {
           setTimeout(() => {
             this.movingMarker.slideTo(latlngs[index], {
@@ -110,7 +124,12 @@ export default {
     controlSpeed() {
 
     }
-  }
+  },
+  watch: {
+    'coords': function () {
+      this.$emit('getMessage',this.coords);
+    }
+  },
 }
 </script>
 
